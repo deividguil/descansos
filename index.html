@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Descansos en vuelo</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Descansos">
+<meta name="theme-color" content="#C8102E">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<style>
+@font-face{font-family:"B612";src:url(B612-Regular.ttf) format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"B612";src:url(B612-Bold.ttf) format("truetype");font-weight:700;font-display:swap}
+@font-face{font-family:"B612 Mono";src:url(B612Mono-Regular.ttf) format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"B612 Mono";src:url(B612Mono-Bold.ttf) format("truetype");font-weight:700;font-display:swap}
+:root{
+  --bg:#F3F2F4; --panel:#FFFFFF; --line:#D8D3D6; --ink:#1C1618; --dim:#6B6064;
+  --brand:#C8102E; --entry:#C8102E; --computed:#1C1618; --warn:#B45309; --mine:#FFC72C; --onmine:#1C1618; --gap:#E6DFE2; --rest:#C8102E;
+  --sans:"B612","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"B612 Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  box-sizing:border-box;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141114; --panel:#1F1A1D; --line:#3A3035; --ink:#F3EEF0; --dim:#A3979C;
+    --brand:#B00E28; --entry:#FF6B7D; --computed:#F3EEF0; --warn:#FFB347; --mine:#FFC72C; --onmine:#1C1618; --gap:#3A3035; --rest:#E0303F;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141114; --panel:#1F1A1D; --line:#3A3035; --ink:#F3EEF0; --dim:#A3979C;
+    --brand:#B00E28; --entry:#FF6B7D; --computed:#F3EEF0; --warn:#FFB347; --mine:#FFC72C; --onmine:#1C1618; --gap:#3A3035; --rest:#E0303F;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--brand)}
+body{min-height:100vh}
+body{-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
+main{max-width:560px;margin:0 auto;padding:16px 16px 40px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-16px -16px 16px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 14px;background:var(--brand);color:#fff;border-bottom:4px solid var(--mine)}
+header .ghost{border-color:rgba(255,255,255,.6);color:#fff}
+h1{font-size:1.15rem;margin:0}
+h2{font-size:.95rem;margin:0 0 8px;color:var(--dim);font-weight:400}
+button{font:inherit;cursor:pointer}
+.ghost{background:none;border:1px solid var(--line);color:var(--dim);font-size:.85rem;padding:6px 10px;border-radius:6px}
+
+.inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.field label{display:block;font-size:.85rem;color:var(--dim);margin-bottom:4px}
+.field .row{display:flex;align-items:center;gap:8px}
+.field input{width:100%;min-width:0;background:transparent;border:0;border-bottom:2px solid var(--line);color:var(--entry);font-family:var(--mono);font-size:2.1rem;font-weight:700;padding:2px 0}
+.field input:focus{outline:none;border-bottom-color:var(--entry)}
+.field input::placeholder{color:var(--line)}
+.field small{display:block;font-size:.8rem;color:var(--dim);margin-top:4px;min-height:1.1em;font-family:var(--mono)}
+.now{flex:none;background:none;border:1px solid var(--entry);color:var(--entry);font-size:.8rem;padding:6px 8px;border-radius:6px}
+
+.bar.paper .r{background:var(--ink);color:var(--bg)}
+.bar{display:flex;height:22px;border-radius:4px;overflow:hidden;border:1px solid var(--line);background:var(--panel)}
+.bar div{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;overflow:hidden}
+.bar .m{background:repeating-linear-gradient(135deg,var(--panel) 0 5px,var(--gap) 5px 6px)}
+.bar .r{background:var(--rest);color:#fff;font-weight:700}
+.bar .r.me{background:var(--mine);color:var(--onmine)}
+.bar .g{background:var(--gap)}
+.ends{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.8rem;color:var(--dim);margin:14px 2px 0}
+
+.sec{margin-top:22px}
+.sec h2{font-size:1.05rem;color:var(--ink);font-weight:700;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+.sec h2::before{content:"";width:6px;height:18px;border-radius:2px;background:var(--rest)}
+.sec.paper h2::before{background:var(--ink)}
+.sec .note{font-size:.85rem;color:var(--dim);margin:0 0 10px}
+.sec .bar{margin-bottom:10px}
+.rests{display:grid;gap:10px}
+.sec.paper .rest .n{border-color:var(--ink);color:var(--ink)}
+.rest{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.rest.me{border:2px solid var(--mine);padding:11px 13px}
+.rest .n{grid-row:1/4;width:30px;height:30px;border-radius:50%;border:2px solid var(--rest);color:var(--rest);display:grid;place-items:center;font-weight:700;align-self:start;margin-top:4px}
+.rest.me .n{border-color:var(--mine);background:var(--mine);color:var(--onmine)}
+.line{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:8px}
+.line .k{font-size:.8rem;color:var(--dim)}
+.line .t{font-family:var(--mono);font-size:1.45rem;font-weight:700;color:var(--computed)}
+.line.sub .k{color:var(--rest)}
+.line .t span{color:var(--dim);font-weight:400;padding:0 .15em}
+.line .d{font-family:var(--mono);font-size:.85rem;color:var(--dim)}
+.line.sub .t{font-size:1.1rem;color:var(--ink)}
+.rest .pick{grid-column:2;justify-self:start;margin-top:6px;background:none;border:1px solid var(--line);color:var(--dim);font-size:.85rem;padding:6px 10px;border-radius:6px}
+.rest.me .pick{border-color:var(--mine);background:var(--mine);color:var(--onmine);font-weight:700}
+
+.msg{margin-top:14px;padding:14px;border:1px dashed var(--line);border-radius:10px;color:var(--dim);font-size:.95rem}
+.msg.err{border-color:var(--warn);color:var(--warn)}
+
+.alarm{margin-top:12px;background:var(--panel);border:2px solid var(--mine);border-radius:10px;padding:14px}
+.count{font-family:var(--mono);font-size:2.6rem;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.1}
+.count small{display:block;font-family:var(--sans);font-size:.85rem;font-weight:400;color:var(--dim)}
+.al{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.al label{font-size:.9rem}
+.al input{width:64px;font-family:var(--mono);font-size:1.1rem;color:var(--entry);background:transparent;border:1px solid var(--line);border-radius:6px;padding:6px 8px;text-align:right}
+.al .when{grid-column:1/-1;font-family:var(--mono);font-size:.9rem;color:var(--dim)}
+.al .when b{color:var(--ink)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:flex;align-items:center;justify-content:center;text-align:center;padding:14px 10px;border-radius:8px;font-weight:700;font-size:.95rem;text-decoration:none;border:2px solid var(--brand);background:var(--brand);color:#fff}
+.btn.alt{background:none;color:var(--ink);border-color:var(--line)}
+.alarm details{margin-top:12px;border:0;background:none}
+.alarm summary{padding:8px 0}
+.al .clock{grid-column:1/-1;justify-self:start;background:none;border:1px solid var(--entry);color:var(--entry);font-size:.85rem;padding:7px 10px;border-radius:6px;text-decoration:none}
+.arm{width:100%;margin-top:10px;padding:14px;border-radius:8px;border:0;background:var(--entry);color:#fff;font-weight:700;font-size:1rem}
+.arm.on{background:none;border:2px solid var(--entry);color:var(--entry)}
+.status{font-size:.85rem;color:var(--dim);margin:8px 0 0}
+
+.actions{display:flex;gap:10px;margin-top:12px}
+.actions button{flex:1;font-size:.95rem;padding:12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.actions .primary{background:var(--entry);border-color:var(--entry);color:var(--bg);font-weight:700}
+
+details{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+summary{padding:12px 14px;cursor:pointer;color:var(--dim);font-size:.95rem}
+.settings{display:grid;grid-template-columns:1fr auto auto;gap:8px 10px;align-items:center;padding:0 14px 14px}
+.settings .hd{font-size:.8rem;color:var(--dim);text-align:right}
+.settings label{font-size:.9rem}
+.settings input{width:64px;font-family:var(--mono);font-size:1.05rem;color:var(--entry);background:transparent;border:1px solid var(--line);border-radius:6px;padding:6px 8px;text-align:right}
+.settings .hint{grid-column:1/-1;font-size:.8rem;color:var(--dim);margin:4px 0 0}
+
+.ring{position:fixed;inset:0;background:var(--brand);color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center;z-index:10}
+.ring.show{display:flex}
+.ring p{margin:0;font-size:1.3rem;max-width:22ch}
+.ring .big{font-family:var(--mono);font-size:3.2rem;font-weight:700}
+.ring button{background:var(--mine);color:var(--onmine);border:0;border-radius:10px;padding:16px 40px;font-size:1.2rem;font-weight:700}
+
+.night{position:fixed;inset:0;background:#000;color:#7A1020;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center;z-index:9;cursor:pointer}
+.night.show{display:flex}
+.night .big{font-family:var(--mono);font-size:clamp(3.5rem,19vw,7rem);font-weight:700;color:#B3172C;line-height:1}
+.night p{margin:0;font-size:1rem;color:#6E1422}
+button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--entry);outline-offset:2px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion: reduce){.toast{transition:none}}
+@media (max-width:370px){.field input{font-size:1.7rem}.line .t{font-size:1.2rem}.line{grid-template-columns:1fr auto}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Descansos en vuelo</h1>
+    <button class="ghost" id="theme" type="button">Tema</button>
+  </header>
+
+  <section class="inputs">
+    <div class="field">
+      <label for="tko">Despegue UTC</label>
+      <div class="row">
+        <input id="tko" inputmode="numeric" autocomplete="off" placeholder="--:--" maxlength="5">
+        <button class="now" id="nowBtn" type="button">Ahora</button>
+      </div>
+      <small id="tkoLt"></small>
+    </div>
+    <div class="field">
+      <label for="eta">ETA UTC</label>
+      <input id="eta" inputmode="numeric" autocomplete="off" placeholder="--:--" maxlength="5">
+      <small id="etaLt"></small>
+    </div>
+  </section>
+
+  <div id="out"></div>
+  <div id="alarmBox"></div>
+
+  <details>
+    <summary>Ajustes</summary>
+    <div class="settings">
+      <span></span><span class="hd">Papel</span><span class="hd">Máquina</span>
+      <label>Minutos tras el despegue</label><input id="oA" inputmode="numeric" value="30" aria-label="Papel, minutos tras el despegue"><input id="uA" inputmode="numeric" value="30" aria-label="Máquina, minutos tras el despegue">
+      <label>Minutos antes de la ETA</label><input id="oB" inputmode="numeric" value="55" aria-label="Papel, minutos antes de la ETA"><input id="uB" inputmode="numeric" value="30" aria-label="Máquina, minutos antes de la ETA">
+      <label>Minutos entre descansos</label><input id="oG" inputmode="numeric" value="15" aria-label="Papel, minutos entre descansos"><input id="uG" inputmode="numeric" value="5" aria-label="Máquina, minutos entre descansos">
+      <label for="sN">Número de descansos</label><span></span><input id="sN" inputmode="numeric" value="3">
+      <label for="sLt">Hora local (UTC ±h)</label><span></span><input id="sLt" inputmode="decimal" placeholder="—">
+      <p class="hint">Los minutos que sobran al dividir se reparten entre los primeros descansos. El timer y las alarmas usan los horarios de máquina y suenan a la hora del reloj del móvil.</p>
+    </div>
+  </details>
+</main>
+
+<div class="ring" id="ring" role="alertdialog" aria-live="assertive">
+  <div class="big" id="ringTime"></div>
+  <p id="ringText"></p>
+  <button id="ringStop" type="button">Parar</button>
+</div>
+<div class="night" id="night" role="dialog" aria-label="Modo descanso">
+  <p id="nightTop"></p>
+  <div class="big" id="nightTime"></div>
+  <p id="nightSub"></p>
+  <p style="margin-top:30px">Toca para salir</p>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var tko=$('tko'), eta=$('eta'), out=$('out'), box=$('alarmBox');
+  var S={oA:$('oA'),oB:$('oB'),oG:$('oG'),uA:$('uA'),uB:$('uB'),uG:$('uG'),n:$('sN'),lt:$('sLt')};
+  var KEY='descansos-v2';
+  var st={mine:null,pre:10,post:10,armed:false};
+  var ua=navigator.userAgent, isIOS=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&'ontouchend' in document), isAndroid=/Android/.test(ua);
+
+  function pad(n){return (n<10?'0':'')+n}
+  function fmt(m){m=((m%1440)+1440)%1440;return pad(Math.floor(m/60))+':'+pad(m%60)}
+  function dur(m){return Math.floor(m/60)+'h'+pad(m%60)}
+  function parse(v){var d=(v||'').replace(/\D/g,'');if(d.length<3)return null;if(d.length===3)d='0'+d;var h=+d.slice(0,2),mi=+d.slice(2,4);if(h>23||mi>59)return null;return h*60+mi}
+  function num(el,def){var v=parseInt(el.value,10);return isNaN(v)||v<0?def:v}
+  function ltOffset(){var v=parseFloat((S.lt.value||'').replace(',','.'));return isNaN(v)?null:Math.round(v*60)}
+
+  // Minuto UTC del vuelo -> Date real más cercana a ahora
+  function toDate(m){
+    var now=new Date(), d=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate(),0,((m%1440)+1440)%1440)), best=d;
+    [-1,1].forEach(function(k){var c=new Date(d.getTime()+k*864e5);if(Math.abs(c-now)<Math.abs(best-now))best=c});
+    return best;
+  }
+  function phone(d){return pad(d.getHours())+':'+pad(d.getMinutes())}
+
+  function split(t,e,a,b,g,n){
+    var start=t+a,end=e-b,win=end-start,avail=win-g*(n-1);
+    if(avail<n)return {err:true,start:start,end:end,win:win};
+    var base=Math.floor(avail/n),extra=avail-base*n,r=[],c=start;
+    for(var i=0;i<n;i++){var d=base+(i<extra?1:0);r.push({s:c,e:c+d,d:d});c+=d+g}
+    return {start:start,end:end,win:win,r:r,a:a,b:b,g:g};
+  }
+
+  function autoFmt(e){
+    var el=e.target,d=el.value.replace(/\D/g,'').slice(0,4);
+    el.value=d.length>2?d.slice(0,2)+':'+d.slice(2):d;
+    if(d.length===4&&el===tko&&parse(d)!==null)eta.focus();
+    calc();
+  }
+  tko.addEventListener('input',autoFmt);eta.addEventListener('input',autoFmt);
+  Object.keys(S).forEach(function(k){S[k].addEventListener('input',calc)});
+  $('nowBtn').addEventListener('click',function(){var d=new Date();tko.value=pad(d.getUTCHours())+':'+pad(d.getUTCMinutes());calc();eta.focus()});
+
+  var cur=null;
+  function barHtml(p,paper){
+    var h='<div class="m" style="flex:'+p.a+'"></div>';
+    p.r.forEach(function(r,i){h+='<div class="r'+(!paper&&st.mine===i?' me':'')+'" style="flex:'+r.d+'">'+(i+1)+'</div>';if(i<p.r.length-1)h+='<div class="g" style="flex:'+p.g+'"></div>'});
+    return '<div class="bar'+(paper?' paper':'')+'" aria-hidden="true">'+h+'<div class="m" style="flex:'+p.b+'"></div></div>';
+  }
+
+  function calc(){
+    var t=parse(tko.value),e=parse(eta.value),n=Math.max(1,Math.min(6,num(S.n,3))),off=ltOffset();
+    $('tkoLt').textContent=(t!==null&&off!==null)?fmt(t+off)+' LT':'';
+    $('etaLt').textContent=(e!==null&&off!==null)?fmt(e+off)+' LT':'';
+    cur=null;
+    if(t===null||e===null){
+      out.innerHTML='<div class="msg">Introduce la hora de despegue y la ETA en UTC. Basta con cuatro dígitos, por ejemplo 0725.</div>';
+      box.innerHTML='';save();return;
+    }
+    if(e<=t)e+=1440;
+    var O=split(t,e,num(S.oA,30),num(S.oB,55),num(S.oG,15),n);
+    var U=split(t,e,num(S.uA,30),num(S.uB,30),num(S.uG,5),n);
+    if(O.err||U.err){
+      var p=O.err?O:U;
+      out.innerHTML='<div class="msg err">El vuelo es demasiado corto para '+n+' descansos: quedan '+Math.max(0,p.win)+' min entre '+fmt(p.start)+' y '+fmt(p.end)+'. Revisa las horas o los ajustes.</div>';
+      box.innerHTML='';save();return;
+    }
+    if(st.mine!==null&&st.mine>=n)st.mine=null;
+    cur={t:t,e:e,O:O,U:U,n:n,off:off};
+
+    var ltSpan=function(r){return off!==null?'<div class="line"><span class="d">'+fmt(r.s+off)+'–'+fmt(r.e+off)+' LT</span></div>':''};
+    var line=function(r){return '<div class="line"><span class="t">'+fmt(r.s)+'<span>–</span>'+fmt(r.e)+'</span><span class="d">'+dur(r.d)+'</span></div>'};
+    var paperCards=O.r.map(function(r,i){
+      return '<div class="rest"><div class="n">'+(i+1)+'</div><div>'+line(r)+ltSpan(r)+'</div></div>';
+    }).join('');
+    var machineCards=U.r.map(function(r,i){
+      var me=st.mine===i;
+      return '<div class="rest'+(me?' me':'')+'"><div class="n">'+(i+1)+'</div><div>'+line(r)+ltSpan(r)+'</div>'+
+        '<button class="pick" type="button" data-i="'+i+'" aria-pressed="'+me+'">'+(me?'Mi descanso':'Es mi descanso')+'</button></div>';
+    }).join('');
+
+    out.innerHTML='<div class="ends"><span>Despegue '+fmt(t)+'</span><span>'+dur(e-t)+' de vuelo</span><span>ETA '+fmt(e)+'</span></div>'+
+      '<section class="sec paper"><h2>Para el papel</h2><p class="note">Franjas oficiales para la hoja de descansos, en UTC.</p>'+barHtml(O,true)+'<div class="rests">'+paperCards+'</div>'+
+      '<div class="actions"><button class="primary" id="copy" type="button">Copiar horarios</button><button id="clear" type="button">Borrar</button></div></section>'+
+      '<section class="sec" id="machine"><h2>Para la máquina</h2><p class="note">Marca tu descanso para el timer y las alarmas.</p>'+barHtml(U,false)+'<div class="rests">'+machineCards+'</div><div id="alarmSlot"></div></section>';
+    out.querySelectorAll('.pick').forEach(function(b){b.addEventListener('click',function(){
+      var i=+b.dataset.i;st.mine=(st.mine===i?null:i);if(st.mine===null)disarm();calc();
+      if(st.mine!==null)box.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+    })});
+    $('copy').addEventListener('click',copy);
+    $('clear').addEventListener('click',function(){tko.value='';eta.value='';st.mine=null;disarm();calc();tko.focus()});
+    var slot=$('alarmSlot');if(slot)slot.appendChild(box);
+    renderAlarm();save();
+  }
+
+  // ---------- Alarmas ----------
+  function alarms(){
+    if(!cur||st.mine===null)return [];
+    var r=cur.U.r[st.mine],list=[];
+    if(st.pre>0)list.push({key:'pre',m:r.s-st.pre,label:'Tu descanso '+(st.mine+1)+' empieza a las '+fmt(r.s)+' UTC'});
+    if(st.post>0)list.push({key:'post',m:r.e-st.post,label:'Tu descanso '+(st.mine+1)+' termina a las '+fmt(r.e)+' UTC'});
+    list.forEach(function(a){a.at=toDate(a.m)});
+    return list;
+  }
+  var topLevel=(function(){try{return window.top===window.self}catch(e){return false}})();
+  function sc(name,text){
+    var q='name='+encodeURIComponent(name)+'&input=text&text='+encodeURIComponent(text);
+    return topLevel?'shortcuts://x-callback-url/run-shortcut?'+q+'&x-success='+encodeURIComponent(location.href.split('#')[0]):'shortcuts://run-shortcut?'+q;
+  }
+  var LT=topLevel?'_self':'_blank';
+  function clockLink(d,label){
+    if(isAndroid) return 'intent:#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR='+d.getHours()+';i.android.intent.extra.alarm.MINUTES='+d.getMinutes()+';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(label)+';end';
+    if(isIOS) return sc('Alarma descanso',phone(d));
+    return null;
+  }
+  function timerLink(sec,label){
+    var m=Math.max(1,Math.round(sec/60));
+    if(isAndroid) return 'intent:#Intent;action=android.intent.action.SET_TIMER;i.android.intent.extra.alarm.LENGTH='+(m*60)+';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(label)+';B.android.intent.extra.alarm.SKIP_UI=true;end';
+    if(isIOS) return sc('Timer descanso',m);
+    return null;
+  }
+  function renderAlarm(){
+    if(!cur||st.mine===null){box.innerHTML='';return}
+    var A=alarms();
+    var row=function(key,txt){
+      var a=A.filter(function(x){return x.key===key})[0];
+      var when=a?'<div class="when">'+fmt(a.m)+' UTC · <b>'+phone(a.at)+'</b> en tu móvil</div>':'<div class="when">Desactivada</div>';
+      var link=a?clockLink(a.at,a.label):null;
+      return '<div class="al"><label for="al_'+key+'">'+txt+'</label><input id="al_'+key+'" inputmode="numeric" value="'+st[key]+'">'+when+
+        (link?'<a class="clock" href="'+link+'" target="'+LT+'" rel="noopener">Poner '+phone(a.at)+' en el reloj</a>':'')+'</div>';
+    };
+    box.innerHTML='<div class="alarm"><p class="count" id="count"></p>'+
+      '<div class="btns"><a class="btn" id="timerBtn" target="'+LT+'" rel="noopener">Poner timer</a><button class="btn alt" id="nightBtn" type="button">Modo descanso</button></div>'+
+      '<p class="status" id="timerHint"></p><details open><summary>Alarmas</summary>'+
+      row('pre','Aviso antes de empezar (min)')+row('post','Despertador antes de terminar (min)')+
+      '<button class="arm'+(st.armed?' on':'')+'" id="arm" type="button">'+(st.armed?'Desactivar alarmas':'Activar alarmas en la app')+'</button>'+
+      '<p class="status" id="status">'+statusText()+'</p></details></div>';
+    ['pre','post'].forEach(function(k){$('al_'+k).addEventListener('change',function(e){st[k]=num(e.target,0);fired={};calc()})});
+    $('arm').addEventListener('click',function(){st.armed?disarm():arm();renderAlarm();save()});
+    $('nightBtn').addEventListener('click',openNight);
+    $('timerBtn').addEventListener('click',function(e){
+      if(!$('timerBtn').getAttribute('href')){e.preventDefault();toast(isIOS||isAndroid?'Tu descanso ya ha terminado':'El timer del reloj solo funciona en iPhone y Android')}
+    });
+    tick();
+  }
+  function openNight(){
+    $('night').classList.add('show');
+    try{if(navigator.wakeLock&&!wake)navigator.wakeLock.request('screen').then(function(w){wake=w}).catch(function(){})}catch(e){}
+    tick();
+  }
+  $('night').addEventListener('click',function(){$('night').classList.remove('show');if(!st.armed){try{wake&&wake.release()}catch(e){}wake=null}});
+  function statusText(){
+    if(!st.armed)return 'Con la app abierta y la pantalla encendida sonará y vibrará. El botón del reloj crea la alarma en el propio móvil'+(isIOS?' (necesita el atajo «Alarma descanso»).':'.');
+    return 'Alarmas activas. Deja esta pantalla abierta'+(wake?'; la pantalla no se apagará.':'; bloquea el apagado automático de pantalla.');
+  }
+
+  var ctx=null,wake=null,fired={},beepT=null;
+  function arm(){
+    try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();blip(ctx.currentTime,.05)}catch(e){}
+    try{if(navigator.wakeLock)navigator.wakeLock.request('screen').then(function(w){wake=w;var s=$('status');if(s)s.textContent=statusText()}).catch(function(){})}catch(e){}
+    try{if(window.Notification&&Notification.permission==='default')Notification.requestPermission()}catch(e){}
+    st.armed=true;fired={};
+    alarms().forEach(function(a){if(a.at<=new Date())fired[a.key+a.m]=1});
+    toast('Alarmas activadas');
+  }
+  function disarm(){st.armed=false;stopRing();try{wake&&wake.release()}catch(e){}wake=null}
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible'&&st.armed&&navigator.wakeLock&&!wake){navigator.wakeLock.request('screen').then(function(w){wake=w}).catch(function(){})}
+  });
+
+  function blip(t,len){var o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.value=880;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.4,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+len+.02)}
+  function ring(a){
+    $('ringTime').textContent=phone(a.at);$('ringText').textContent=a.label;$('ring').classList.add('show');
+    var loop=function(){if(ctx){var t=ctx.currentTime;blip(t,.15);blip(t+.25,.15);blip(t+.5,.15)}try{navigator.vibrate&&navigator.vibrate([400,200,400])}catch(e){}};
+    loop();clearInterval(beepT);beepT=setInterval(loop,1500);
+    setTimeout(stopSound,90000);
+    try{if(window.Notification&&Notification.permission==='granted')new Notification('Descanso',{body:a.label})}catch(e){}
+  }
+  function stopSound(){clearInterval(beepT);beepT=null}
+  function stopRing(){stopSound();$('ring').classList.remove('show')}
+  $('ringStop').addEventListener('click',stopRing);
+
+  function hms(ms){var s=Math.max(0,Math.ceil(ms/1000)),hh=Math.floor(s/3600),mm=Math.floor(s%3600/60),ss=s%60;return hh+':'+pad(mm)+':'+pad(ss)}
+  function tick(){
+    var c=$('count');
+    if(cur&&st.mine!==null&&c){
+      var r=cur.U.r[st.mine],now=new Date(),s=toDate(r.s),e=new Date(s.getTime()+r.d*60000),left=e-now,sub,top;
+      if(now<s){sub='hasta el final de tu descanso '+(st.mine+1)+' ('+fmt(r.e)+' UTC). Empieza a las '+fmt(r.s)+' UTC.';top='Descanso '+(st.mine+1)+' aún no ha empezado'}
+      else if(now<e){sub='para terminar tu descanso '+(st.mine+1)+' ('+fmt(r.e)+' UTC)';top='Te queda'}
+      else{sub='tu descanso '+(st.mine+1)+' terminó a las '+fmt(r.e)+' UTC';top='Descanso terminado'}
+      c.innerHTML=(left>0?hms(left):'0:00:00')+'<small>'+sub+'</small>';
+      var hint=$('timerHint');
+      if(hint)hint.textContent=left>60000?'«Poner timer» crea en el reloj un temporizador hasta el final de tu descanso.':'Tu descanso ya ha terminado: el timer y las alarmas solo se ofrecen para horas futuras.';
+      var tb=$('timerBtn');
+      if(tb){var l=left>60000?timerLink(left/1000,'Fin descanso '+(st.mine+1)):null;
+        if(l){tb.setAttribute('href',l);tb.textContent='Poner timer '+dur(Math.round(left/60000))}else{tb.removeAttribute('href');tb.textContent='Poner timer'}}
+      $('nightTop').textContent=top;$('nightTime').textContent=left>0?hms(left):'0:00:00';$('nightSub').textContent='Fin '+fmt(r.e)+' UTC · '+phone(e)+' en tu móvil';
+    }
+    if(st.armed){
+      var now2=new Date();
+      alarms().forEach(function(a){var k=a.key+a.m;if(!fired[k]&&now2>=a.at&&now2-a.at<5*60000){fired[k]=1;ring(a)}});
+    }
+  }
+  setInterval(tick,1000);
+
+  // ---------- Copiar / guardar ----------
+  function copy(){
+    if(!cur)return;
+    var L=function(p){return p.r.map(function(r,i){return 'D'+(i+1)+': '+fmt(r.s)+'-'+fmt(r.e)+'Z ('+dur(r.d)+')'}).join('\n')};
+    var txt='DESPEGUE '+fmt(cur.t)+'Z  ETA '+fmt(cur.e)+'Z\nPAPEL\n'+L(cur.O)+'\nMAQUINA\n'+L(cur.U);
+    var done=function(){toast('Horarios copiados')};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,function(){fb(txt);done()});else{fb(txt);done()}
+  }
+  function fb(txt){var a=document.createElement('textarea');a.value=txt;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove()}
+  var tt;function toast(m){var el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){el.classList.remove('show')},1600)}
+
+  function save(){
+    try{var d={tko:tko.value,eta:eta.value,mine:st.mine,pre:st.pre,post:st.post,theme:document.documentElement.getAttribute('data-theme')||''};
+      Object.keys(S).forEach(function(k){d[k]=S[k].value});localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}
+  }
+  function load(){
+    try{var d=JSON.parse(localStorage.getItem(KEY)||'null');if(!d)return;
+      tko.value=d.tko||'';eta.value=d.eta||'';st.mine=(typeof d.mine==='number')?d.mine:null;
+      if(typeof d.pre==='number')st.pre=d.pre;if(typeof d.post==='number')st.post=d.post;
+      Object.keys(S).forEach(function(k){if(d[k]!=null&&d[k]!=='')S[k].value=d[k]});
+      if(d.theme)document.documentElement.setAttribute('data-theme',d.theme);
+    }catch(e){}
+  }
+  $('theme').addEventListener('click',function(){
+    var r=document.documentElement,c=r.getAttribute('data-theme');
+    var dark=c?c==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+    r.setAttribute('data-theme',dark?'light':'dark');save();
+  });
+
+  load();calc();
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}
+})();
+</script>
+</body>
+</html>
