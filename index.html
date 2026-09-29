@@ -298,7 +298,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   var topLevel=(function(){try{return window.top===window.self}catch(e){return false}})();
   function sc(name,text){
     var q='name='+encodeURIComponent(name)+'&input=text&text='+encodeURIComponent(text);
-    return topLevel?'shortcuts://x-callback-url/run-shortcut?'+q+'&x-success='+encodeURIComponent(location.href.split('#')[0]):'shortcuts://run-shortcut?'+q;
+    return 'shortcuts://run-shortcut?'+q;
   }
   var LT=topLevel?'_self':'_blank';
   function clockLink(d,label){
