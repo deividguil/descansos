@@ -1,5 +1,5 @@
 // Sube el número de versión cada vez que cambies algún archivo
-const CACHE='descansos-v8';
+const CACHE='descansos-v9';
 const FILES=['./','index.html','manifest.json','icon-180.png','icon-192.png','icon-512.png',
  'B612-Regular.ttf','B612-Bold.ttf','B612Mono-Regular.ttf','B612Mono-Bold.ttf'];
 

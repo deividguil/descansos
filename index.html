@@ -185,7 +185,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
       <label for="sN">Número de descansos</label><span></span><input id="sN" inputmode="numeric" value="3">
       <label for="sLt">Hora local (UTC ±h)</label><span></span><input id="sLt" inputmode="decimal" placeholder="—">
       <p class="hint" id="installRow" hidden><a class="clock" id="installLink" target="_blank" rel="noopener">Instalar atajo «Descanso» (una vez)</a></p>
-      <p class="hint">Versión 8</p>
+      <p class="hint">Versión 9</p>
       <p class="hint">Los minutos que sobran al dividir se reparten entre los primeros descansos. El timer y las alarmas usan los horarios de máquina y suenan a la hora del reloj del móvil.</p>
     </div>
   </details>
@@ -310,7 +310,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   // Atajo único de iOS: recibe los minutos y pone el timer
   var SHORTCUT='Descanso';
   // Pega aquí el enlace de iCloud del atajo para mostrar el botón «Instalar atajo»
-  var SHORTCUT_INSTALL='';
+  var SHORTCUT_INSTALL='https://www.icloud.com/shortcuts/a68ddf6eb6e14c299e3a8b630f9ae5d8';
   var topLevel=(function(){try{return window.top===window.self}catch(e){return false}})();
   function sc(name,text){
     var q='name='+encodeURIComponent(name)+'&input=text&text='+encodeURIComponent(text);
