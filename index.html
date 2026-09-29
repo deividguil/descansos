@@ -100,6 +100,11 @@ button{font:inherit;cursor:pointer}
 .al input{width:64px;font-family:var(--mono);font-size:1.1rem;color:var(--entry);background:transparent;border:1px solid var(--line);border-radius:6px;padding:6px 8px;text-align:right}
 .al .when{grid-column:1/-1;font-family:var(--mono);font-size:.9rem;color:var(--dim)}
 .al .when b{color:var(--ink)}
+.adv{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+.adv span{font-size:.95rem}
+.step{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.step button{width:44px;height:44px;border:0;background:none;color:var(--entry);font-size:1.4rem;font-weight:700}
+.step output{min-width:4.5em;text-align:center;font-family:var(--mono);font-size:1.05rem;font-weight:700;border-left:1px solid var(--line);border-right:1px solid var(--line);line-height:44px}
 .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn{display:flex;align-items:center;justify-content:center;text-align:center;padding:14px 10px;border-radius:8px;font-weight:700;font-size:.95rem;text-decoration:none;border:2px solid var(--brand);background:var(--brand);color:#fff}
 .btn.alt{background:none;color:var(--ink);border-color:var(--line)}
@@ -128,10 +133,15 @@ summary{padding:12px 14px;cursor:pointer;color:var(--dim);font-size:.95rem}
 .ring .big{font-family:var(--mono);font-size:3.2rem;font-weight:700}
 .ring button{background:var(--mine);color:var(--onmine);border:0;border-radius:10px;padding:16px 40px;font-size:1.2rem;font-weight:700}
 
-.night{position:fixed;inset:0;background:#000;color:#7A1020;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center;z-index:9;cursor:pointer}
+.night{position:fixed;inset:0;background:#000;color:var(--nc);--nc:#3A0A12;--nd:#6E0E1C;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center;z-index:9;cursor:pointer}
 .night.show{display:flex}
-.night .big{font-family:var(--mono);font-size:clamp(3.5rem,19vw,7rem);font-weight:700;color:#B3172C;line-height:1}
-.night p{margin:0;font-size:1rem;color:#6E1422}
+.night .big{font-family:var(--mono);font-size:clamp(3.5rem,19vw,7rem);font-weight:700;color:var(--nd);line-height:1}
+.night p{margin:0;font-size:1rem;color:var(--nc)}
+.night[data-l="0"]{--nd:#3A070F;--nc:#240509}
+.night[data-l="1"]{--nd:#6E0E1C;--nc:#3A0A12}
+.night[data-l="2"]{--nd:#B3172C;--nc:#6E1422}
+.dim{position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:28px}
+.dim button{width:56px;height:56px;border-radius:50%;background:none;border:1px solid var(--nc);color:var(--nc);font-size:1.4rem}
 button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--entry);outline-offset:2px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.show{opacity:1}
@@ -174,6 +184,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
       <label>Minutos entre descansos</label><input id="oG" inputmode="numeric" value="15" aria-label="Papel, minutos entre descansos"><input id="uG" inputmode="numeric" value="5" aria-label="Máquina, minutos entre descansos">
       <label for="sN">Número de descansos</label><span></span><input id="sN" inputmode="numeric" value="3">
       <label for="sLt">Hora local (UTC ±h)</label><span></span><input id="sLt" inputmode="decimal" placeholder="—">
+      <p class="hint" id="installRow" hidden><a class="clock" id="installLink" target="_blank" rel="noopener">Instalar atajo «Descanso» (una vez)</a></p>
       <p class="hint">Los minutos que sobran al dividir se reparten entre los primeros descansos. El timer y las alarmas usan los horarios de máquina y suenan a la hora del reloj del móvil.</p>
     </div>
   </details>
@@ -184,11 +195,12 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   <p id="ringText"></p>
   <button id="ringStop" type="button">Parar</button>
 </div>
-<div class="night" id="night" role="dialog" aria-label="Modo descanso">
+<div class="night" id="night" data-l="1" role="dialog" aria-label="Modo descanso">
   <p id="nightTop"></p>
   <div class="big" id="nightTime"></div>
   <p id="nightSub"></p>
   <p style="margin-top:30px">Toca para salir</p>
+  <div class="dim"><button type="button" id="dimDown" aria-label="Más tenue">−</button><button type="button" id="dimUp" aria-label="Más visible">+</button></div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -198,7 +210,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   var tko=$('tko'), eta=$('eta'), out=$('out'), box=$('alarmBox');
   var S={oA:$('oA'),oB:$('oB'),oG:$('oG'),uA:$('uA'),uB:$('uB'),uG:$('uG'),n:$('sN'),lt:$('sLt')};
   var KEY='descansos-v2';
-  var st={mine:null,pre:10,post:10,armed:false};
+  var st={mine:null,post:10,armed:false};
   var ua=navigator.userAgent, isIOS=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&'ontouchend' in document), isAndroid=/Android/.test(ua);
 
   function pad(n){return (n<10?'0':'')+n}
@@ -290,11 +302,14 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   function alarms(){
     if(!cur||st.mine===null)return [];
     var r=cur.U.r[st.mine],list=[];
-    if(st.pre>0)list.push({key:'pre',m:r.s-st.pre,label:'Tu descanso '+(st.mine+1)+' empieza a las '+fmt(r.s)+' UTC'});
-    if(st.post>0)list.push({key:'post',m:r.e-st.post,label:'Tu descanso '+(st.mine+1)+' termina a las '+fmt(r.e)+' UTC'});
+    list.push({key:'post',m:r.e-st.post,label:'Tu descanso '+(st.mine+1)+' termina a las '+fmt(r.e)+' UTC'});
     list.forEach(function(a){a.at=toDate(a.m)});
     return list;
   }
+  // Atajo único de iOS: recibe minutos (timer) o HH:MM (alarma)
+  var SHORTCUT='Descanso';
+  // Pega aquí el enlace de iCloud del atajo para mostrar el botón «Instalar atajo»
+  var SHORTCUT_INSTALL='';
   var topLevel=(function(){try{return window.top===window.self}catch(e){return false}})();
   function sc(name,text){
     var q='name='+encodeURIComponent(name)+'&input=text&text='+encodeURIComponent(text);
@@ -303,48 +318,46 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   var LT=topLevel?'_self':'_blank';
   function clockLink(d,label){
     if(isAndroid) return 'intent:#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR='+d.getHours()+';i.android.intent.extra.alarm.MINUTES='+d.getMinutes()+';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(label)+';end';
-    if(isIOS) return sc('Alarma descanso',phone(d));
+    if(isIOS) return sc(SHORTCUT,phone(d));
     return null;
   }
   function timerLink(sec,label){
     var m=Math.max(1,Math.round(sec/60));
     if(isAndroid) return 'intent:#Intent;action=android.intent.action.SET_TIMER;i.android.intent.extra.alarm.LENGTH='+(m*60)+';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(label)+';B.android.intent.extra.alarm.SKIP_UI=true;end';
-    if(isIOS) return sc('Timer descanso',m);
+    if(isIOS) return sc(SHORTCUT,m);
     return null;
   }
   function renderAlarm(){
     if(!cur||st.mine===null){box.innerHTML='';return}
-    var A=alarms();
-    var row=function(key,txt){
-      var a=A.filter(function(x){return x.key===key})[0];
-      var when=a?'<div class="when">'+fmt(a.m)+' UTC · <b>'+phone(a.at)+'</b> en tu móvil</div>':'<div class="when">Desactivada</div>';
-      var link=a?clockLink(a.at,a.label):null;
-      return '<div class="al"><label for="al_'+key+'">'+txt+'</label><input id="al_'+key+'" inputmode="numeric" value="'+st[key]+'">'+when+
-        (link?'<a class="clock" href="'+link+'" target="'+LT+'" rel="noopener">Poner '+phone(a.at)+' en el reloj</a>':'')+'</div>';
-    };
+    var a=alarms()[0],link=a?clockLink(a.at,a.label):null;
     box.innerHTML='<div class="alarm"><p class="count" id="count"></p>'+
+      '<div class="adv"><span>Avisar antes del final</span><div class="step"><button type="button" id="advMinus" aria-label="Menos minutos">−</button><output id="advVal">'+st.post+' min</output><button type="button" id="advPlus" aria-label="Más minutos">+</button></div></div>'+
       '<div class="btns"><a class="btn" id="timerBtn" target="'+LT+'" rel="noopener">Poner timer</a><button class="btn alt" id="nightBtn" type="button">Modo descanso</button></div>'+
-      '<p class="status" id="timerHint"></p><details open><summary>Alarmas</summary>'+
-      row('pre','Aviso antes de empezar (min)')+row('post','Despertador antes de terminar (min)')+
-      '<button class="arm'+(st.armed?' on':'')+'" id="arm" type="button">'+(st.armed?'Desactivar alarmas':'Activar alarmas en la app')+'</button>'+
+      '<p class="status" id="timerHint"></p>'+(isIOS&&SHORTCUT_INSTALL?'<p class="status">¿Primera vez? <a href="'+SHORTCUT_INSTALL+'" target="_blank" rel="noopener" style="color:var(--entry)">Instala el atajo «Descanso»</a>.</p>':'')+
+      '<details><summary>Otras formas de aviso</summary>'+
+      '<div class="al"><div class="when" id="alWhen"></div>'+(link?'<a class="clock" id="clockBtn" href="'+link+'" target="'+LT+'" rel="noopener">Poner alarma en el reloj</a>':'')+'</div>'+
+      '<button class="arm'+(st.armed?' on':'')+'" id="arm" type="button">'+(st.armed?'Desactivar alarma en la app':'Activar alarma en la app')+'</button>'+
       '<p class="status" id="status">'+statusText()+'</p></details></div>';
-    ['pre','post'].forEach(function(k){$('al_'+k).addEventListener('change',function(e){st[k]=num(e.target,0);fired={};calc()})});
+    var setAdv=function(v){st.post=Math.max(0,Math.min(60,v));fired={};save();$('advVal').textContent=st.post+' min';
+      var a2=alarms()[0],cb=$('clockBtn');if(cb&&a2){var l=clockLink(a2.at,a2.label);if(l)cb.setAttribute('href',l)}tick()};
+    $('advMinus').addEventListener('click',function(){setAdv(st.post-5)});
+    $('advPlus').addEventListener('click',function(){setAdv(st.post+5)});
     $('arm').addEventListener('click',function(){st.armed?disarm():arm();renderAlarm();save()});
     $('nightBtn').addEventListener('click',openNight);
     $('timerBtn').addEventListener('click',function(e){
-      if(!$('timerBtn').getAttribute('href')){e.preventDefault();toast(isIOS||isAndroid?'Tu descanso ya ha terminado':'El timer del reloj solo funciona en iPhone y Android')}
+      if(!$('timerBtn').getAttribute('href')){e.preventDefault();toast(isIOS||isAndroid?'El aviso ya ha pasado':'El timer del reloj solo funciona en iPhone y Android')}
     });
     tick();
   }
-  function openNight(){
-    $('night').classList.add('show');
-    try{if(navigator.wakeLock&&!wake)navigator.wakeLock.request('screen').then(function(w){wake=w}).catch(function(){})}catch(e){}
-    tick();
-  }
+  var nightL=1;try{var nl=+localStorage.getItem('descansos-night');if(nl>=0&&nl<=2)nightL=nl}catch(e){}
+  function setNight(v){nightL=Math.max(0,Math.min(2,v));$('night').setAttribute('data-l',nightL);try{localStorage.setItem('descansos-night',nightL)}catch(e){}}
+  function openNight(){setNight(nightL);$('night').classList.add('show');tick()}
+  $('dimDown').addEventListener('click',function(e){e.stopPropagation();setNight(nightL-1)});
+  $('dimUp').addEventListener('click',function(e){e.stopPropagation();setNight(nightL+1)});
   $('night').addEventListener('click',function(){$('night').classList.remove('show');if(!st.armed){try{wake&&wake.release()}catch(e){}wake=null}});
   function statusText(){
-    if(!st.armed)return 'Con la app abierta y la pantalla encendida sonará y vibrará. El botón del reloj crea la alarma en el propio móvil'+(isIOS?' (necesita el atajo «Alarma descanso»).':'.');
-    return 'Alarmas activas. Deja esta pantalla abierta'+(wake?'; la pantalla no se apagará.':'; bloquea el apagado automático de pantalla.');
+    if(!st.armed)return 'La alarma en la app suena y vibra solo con la app abierta y la pantalla encendida.';
+    return 'Alarma activa. Deja esta pantalla abierta'+(wake?'; la pantalla no se apagará.':'; bloquea el apagado automático de pantalla.');
   }
 
   var ctx=null,wake=null,fired={},beepT=null;
@@ -354,7 +367,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
     try{if(window.Notification&&Notification.permission==='default')Notification.requestPermission()}catch(e){}
     st.armed=true;fired={};
     alarms().forEach(function(a){if(a.at<=new Date())fired[a.key+a.m]=1});
-    toast('Alarmas activadas');
+    toast('Alarma activada');
   }
   function disarm(){st.armed=false;stopRing();try{wake&&wake.release()}catch(e){}wake=null}
   document.addEventListener('visibilitychange',function(){
@@ -382,12 +395,14 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
       else if(now<e){sub='para terminar tu descanso '+(st.mine+1)+' ('+fmt(r.e)+' UTC)';top='Te queda'}
       else{sub='tu descanso '+(st.mine+1)+' terminó a las '+fmt(r.e)+' UTC';top='Descanso terminado'}
       c.innerHTML=(left>0?hms(left):'0:00:00')+'<small>'+sub+'</small>';
+      var adj=left-st.post*60000,warnAt=new Date(e.getTime()-st.post*60000);
       var hint=$('timerHint');
-      if(hint)hint.textContent=left>60000?'«Poner timer» crea en el reloj un temporizador hasta el final de tu descanso.':'Tu descanso ya ha terminado: el timer y las alarmas solo se ofrecen para horas futuras.';
+      if(hint)hint.textContent=adj>60000?'Sonará a las '+phone(warnAt)+' en tu móvil ('+fmt(r.e-st.post)+' UTC)'+(st.post?', '+st.post+' min antes del final.':', al final del descanso.'):'La hora del aviso ya ha pasado.';
+      var aw=$('alWhen');if(aw)aw.innerHTML='Alarma a las <b>'+phone(warnAt)+'</b> en tu móvil ('+fmt(r.e-st.post)+' UTC)';
       var tb=$('timerBtn');
-      if(tb){var l=left>60000?timerLink(left/1000,'Fin descanso '+(st.mine+1)):null;
-        if(l){tb.setAttribute('href',l);tb.textContent='Poner timer '+dur(Math.round(left/60000))}else{tb.removeAttribute('href');tb.textContent='Poner timer'}}
-      $('nightTop').textContent=top;$('nightTime').textContent=left>0?hms(left):'0:00:00';$('nightSub').textContent='Fin '+fmt(r.e)+' UTC · '+phone(e)+' en tu móvil';
+      if(tb){var l=adj>60000?timerLink(adj/1000,'Fin descanso '+(st.mine+1)):null;
+        if(l){tb.setAttribute('href',l);tb.textContent='Poner timer '+dur(Math.round(adj/60000))}else{tb.removeAttribute('href');tb.textContent='Poner timer'}}
+      $('nightTop').textContent=top;$('nightTime').textContent=left>0?hms(left):'0:00:00';$('nightSub').textContent='Fin '+fmt(r.e)+' UTC'+(st.post?' · aviso '+phone(warnAt):'');
     }
     if(st.armed){
       var now2=new Date();
@@ -408,13 +423,13 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   var tt;function toast(m){var el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){el.classList.remove('show')},1600)}
 
   function save(){
-    try{var d={tko:tko.value,eta:eta.value,mine:st.mine,pre:st.pre,post:st.post,theme:document.documentElement.getAttribute('data-theme')||''};
+    try{var d={tko:tko.value,eta:eta.value,mine:st.mine,post:st.post,theme:document.documentElement.getAttribute('data-theme')||''};
       Object.keys(S).forEach(function(k){d[k]=S[k].value});localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}
   }
   function load(){
     try{var d=JSON.parse(localStorage.getItem(KEY)||'null');if(!d)return;
       tko.value=d.tko||'';eta.value=d.eta||'';st.mine=(typeof d.mine==='number')?d.mine:null;
-      if(typeof d.pre==='number')st.pre=d.pre;if(typeof d.post==='number')st.post=d.post;
+      if(typeof d.post==='number')st.post=d.post;
       Object.keys(S).forEach(function(k){if(d[k]!=null&&d[k]!=='')S[k].value=d[k]});
       if(d.theme)document.documentElement.setAttribute('data-theme',d.theme);
     }catch(e){}
@@ -425,6 +440,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
     r.setAttribute('data-theme',dark?'light':'dark');save();
   });
 
+  if(isIOS&&SHORTCUT_INSTALL){$('installLink').href=SHORTCUT_INSTALL;$('installRow').hidden=false}
   load();calc();
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}
 })();
