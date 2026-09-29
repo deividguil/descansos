@@ -185,6 +185,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
       <label for="sN">Número de descansos</label><span></span><input id="sN" inputmode="numeric" value="3">
       <label for="sLt">Hora local (UTC ±h)</label><span></span><input id="sLt" inputmode="decimal" placeholder="—">
       <p class="hint" id="installRow" hidden><a class="clock" id="installLink" target="_blank" rel="noopener">Instalar atajo «Descanso» (una vez)</a></p>
+      <p class="hint">Versión 8</p>
       <p class="hint">Los minutos que sobran al dividir se reparten entre los primeros descansos. El timer y las alarmas usan los horarios de máquina y suenan a la hora del reloj del móvil.</p>
     </div>
   </details>
@@ -306,7 +307,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
     list.forEach(function(a){a.at=toDate(a.m)});
     return list;
   }
-  // Atajo único de iOS: recibe minutos (timer) o HH:MM (alarma)
+  // Atajo único de iOS: recibe los minutos y pone el timer
   var SHORTCUT='Descanso';
   // Pega aquí el enlace de iCloud del atajo para mostrar el botón «Instalar atajo»
   var SHORTCUT_INSTALL='';
@@ -318,7 +319,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   var LT=topLevel?'_self':'_blank';
   function clockLink(d,label){
     if(isAndroid) return 'intent:#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR='+d.getHours()+';i.android.intent.extra.alarm.MINUTES='+d.getMinutes()+';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(label)+';end';
-    if(isIOS) return sc(SHORTCUT,phone(d));
+    // En iPhone el atajo solo pone el timer; la alarma del reloj queda para Android
     return null;
   }
   function timerLink(sec,label){
