@@ -142,6 +142,31 @@ summary{padding:12px 14px;cursor:pointer;color:var(--dim);font-size:.95rem}
 .night[data-l="2"]{--nd:#B3172C;--nc:#6E1422}
 .dim{position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:28px}
 .dim button{width:56px;height:56px;border-radius:50%;background:none;border:1px solid var(--nc);color:var(--nc);font-size:1.4rem}
+/* Pulsador bajo guarda */
+.guardbox{margin:28px auto 8px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.plate{position:relative;width:132px;height:150px;border-radius:8px;background:#3B4148;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 2px 6px rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:12px;perspective:420px}
+.plate .screw{position:absolute;width:9px;height:9px;border-radius:50%;background:#7C848D;box-shadow:inset 0 0 0 1px #2A2F35}
+.plate .screw::after{content:"";position:absolute;left:1px;right:1px;top:4px;height:1px;background:#2A2F35;transform:rotate(35deg)}
+.plate .s1{left:7px;top:7px}.plate .s2{right:7px;top:7px}.plate .s3{left:7px;bottom:7px}.plate .s4{right:7px;bottom:7px}
+.plate .legend{font-family:var(--sans);font-size:.7rem;font-weight:700;letter-spacing:.14em;color:#F3F3F3}
+.pb{position:absolute;left:50%;top:26px;width:70px;height:70px;margin-left:-35px;border-radius:6px;border:0;background:#20252A;box-shadow:inset 0 0 0 3px #15191D,0 2px 0 #111;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0}
+.pb span{display:block;width:44px;height:16px;border-radius:2px;background:#3A3A3A;color:#6B6B6B;font:700 .72rem/16px var(--mono);text-align:center}
+.pb .on{color:#6B5A20}
+.pb.lit .on{background:#FFB000;color:#241800;box-shadow:0 0 12px #FFB000}
+.pb:active{transform:translateY(1px)}
+.guard{position:absolute;left:50%;top:18px;width:90px;height:86px;margin-left:-45px;border-radius:8px 8px 10px 10px;border:0;cursor:pointer;background:repeating-linear-gradient(135deg,rgba(200,16,46,.92) 0 10px,rgba(240,240,240,.92) 10px 20px);box-shadow:0 3px 6px rgba(0,0,0,.45),inset 0 0 0 2px rgba(0,0,0,.25);transform-origin:50% 0;transition:transform .45s cubic-bezier(.3,1.4,.5,1);z-index:2;display:flex;align-items:center;justify-content:center}
+.guard b{background:#C8102E;color:#fff;font:700 .72rem var(--sans);letter-spacing:.1em;padding:3px 6px;border-radius:3px}
+.guard.open{transform:rotateX(-112deg)}
+.hinge{position:absolute;left:50%;top:12px;width:70px;height:8px;margin-left:-35px;border-radius:3px;background:#20252A;z-index:3}
+.babybg{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:20;padding:20px;padding-top:calc(20px + env(safe-area-inset-top,0px))}
+.babybg.show{display:flex}
+.babycard{position:relative;width:min(500px,100%);animation:pop .55s cubic-bezier(.2,1.5,.4,1) both}
+.babycard img,.babycard .ph{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;border:4px solid #FFC72C;background:#222;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.babycard .ph{display:none;align-items:center;justify-content:center;color:#ddd;text-align:center;padding:24px;font-size:.95rem}
+.babycard.noimg img{display:none}.babycard.noimg .ph{display:flex}
+.babyx{position:absolute;right:-10px;top:-10px;width:44px;height:44px;border-radius:50%;border:0;background:#C8102E;color:#fff;font-size:1.3rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+@keyframes pop{0%{transform:scale(.2) rotate(-12deg);opacity:0}60%{transform:scale(1.05) rotate(2deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+@media (prefers-reduced-motion: reduce){.guard{transition:none}.babycard{animation:none}}
 button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--entry);outline-offset:2px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.show{opacity:1}
@@ -185,11 +210,27 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
       <label for="sN">Número de descansos</label><span></span><input id="sN" inputmode="numeric" value="3">
       <label for="sLt">Hora local (UTC ±h)</label><span></span><input id="sLt" inputmode="decimal" placeholder="—">
       <p class="hint" id="installRow" hidden><a class="clock" id="installLink" target="_blank" rel="noopener">Instalar atajo «Descanso» (una vez)</a></p>
-      <p class="hint">Versión 9</p>
+      <p class="hint">Versión 10</p>
       <p class="hint">Los minutos que sobran al dividir se reparten entre los primeros descansos. El timer y las alarmas usan los horarios de máquina y suenan a la hora del reloj del móvil.</p>
     </div>
   </details>
+  <div class="guardbox">
+    <div class="plate">
+      <i class="screw s1"></i><i class="screw s2"></i><i class="screw s3"></i><i class="screw s4"></i>
+      <div class="hinge"></div>
+      <button class="guard" id="guard" type="button" aria-label="Levantar la guarda"><b>NO TOCAR</b></button>
+      <button class="pb" id="pb" type="button" aria-label="Pulsador"><span class="on">ON</span><span>PUSH</span></button>
+      <span class="legend">NO TOCAR</span>
+    </div>
+  </div>
 </main>
+<div class="babybg" id="babybg" role="dialog" aria-label="Sorpresa">
+  <div class="babycard" id="babycard">
+    <img src="bebe.jpg" alt="Foto del bebé" width="500" height="500" id="babyimg">
+    <div class="ph">Sube una foto de 500×500 llamada bebe.jpg junto a index.html</div>
+    <button class="babyx" id="babyx" type="button" aria-label="Cerrar">×</button>
+  </div>
+</div>
 
 <div class="ring" id="ring" role="alertdialog" aria-live="assertive">
   <div class="big" id="ringTime"></div>
@@ -442,6 +483,23 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   });
 
   if(isIOS&&SHORTCUT_INSTALL){$('installLink').href=SHORTCUT_INSTALL;$('installRow').hidden=false}
+
+  // Pulsador bajo guarda
+  (function(){
+    var g=$('guard'),pb=$('pb'),bg=$('babybg'),card=$('babycard'),img=$('babyimg');
+    img.addEventListener('error',function(){card.classList.add('noimg')});
+    g.addEventListener('click',function(){g.classList.toggle('open');g.setAttribute('aria-label',g.classList.contains('open')?'Bajar la guarda':'Levantar la guarda')});
+    pb.addEventListener('click',function(){
+      if(!g.classList.contains('open'))return;
+      pb.classList.add('lit');
+      try{navigator.vibrate&&navigator.vibrate(40)}catch(e){}
+      card.style.animation='none';void card.offsetWidth;card.style.animation='';
+      bg.classList.add('show');
+    });
+    function close(){bg.classList.remove('show');pb.classList.remove('lit');setTimeout(function(){g.classList.remove('open')},250)}
+    $('babyx').addEventListener('click',close);
+    bg.addEventListener('click',function(e){if(e.target===bg)close()});
+  })();
   load();calc();
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}
 })();

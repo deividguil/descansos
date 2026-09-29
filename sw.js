@@ -1,12 +1,12 @@
 // Sube el número de versión cada vez que cambies algún archivo
-const CACHE='descansos-v9';
+const CACHE='descansos-v10';
 const FILES=['./','index.html','manifest.json','icon-180.png','icon-192.png','icon-512.png',
- 'B612-Regular.ttf','B612-Bold.ttf','B612Mono-Regular.ttf','B612Mono-Bold.ttf'];
+ 'B612-Regular.ttf','B612-Bold.ttf','B612Mono-Regular.ttf','B612Mono-Bold.ttf','bebe.jpg'];
 
 // Instalación: descarga todo saltándose la caché del navegador
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE)
-    .then(c=>Promise.all(FILES.map(f=>fetch(new Request(f,{cache:'reload'})).then(r=>{if(r.ok)return c.put(f,r)}))))
+    .then(c=>Promise.all(FILES.map(f=>fetch(new Request(f,{cache:'reload'})).then(r=>{if(r.ok)return c.put(f,r)}).catch(()=>{}))))
     .then(()=>self.skipWaiting()));
 });
 self.addEventListener('activate',e=>{
