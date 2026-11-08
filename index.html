@@ -56,6 +56,9 @@ button{font:inherit;cursor:pointer}
 .field input:focus{outline:none;border-bottom-color:var(--entry)}
 .field input::placeholder{color:var(--line)}
 .field small{display:block;font-size:.8rem;color:var(--dim);margin-top:4px;min-height:1.1em;font-family:var(--mono)}
+.mode{display:flex;gap:4px;margin:-2px 0 4px}
+.mode button{flex:1;font-size:.78rem;padding:4px 2px;border-radius:5px;border:1px solid var(--line);background:none;color:var(--dim)}
+.mode button[aria-pressed="true"]{background:var(--entry);border-color:var(--entry);color:#fff;font-weight:700}
 .now{flex:none;background:none;border:1px solid var(--entry);color:var(--entry);font-size:.8rem;padding:6px 8px;border-radius:6px}
 
 .bar.paper .r{background:var(--ink);color:var(--bg)}
@@ -67,6 +70,27 @@ button{font:inherit;cursor:pointer}
 .bar .g{background:var(--gap)}
 .ends{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.8rem;color:var(--dim);margin:14px 2px 0}
 
+.tl{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px 10px}
+.tlhead{display:flex;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:.85rem;color:var(--dim)}
+.tlhead b{color:var(--ink)}
+.tlwrap{padding:14px 14px 12px}
+.tltrack{position:relative;height:4px;border-radius:2px;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 11px)}
+.tldone{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:2px;background:var(--brand)}
+.tlmine{position:absolute;top:-3px;bottom:-3px;border-radius:3px;background:var(--mine);opacity:.85;display:none}
+.tlplane{position:absolute;top:50%;left:0;width:26px;height:26px;fill:var(--brand);transform:translate(-50%,-50%) rotate(90deg);filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.tlends{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.8rem;color:var(--dim)}
+.tlends b{color:var(--ink)}
+.paperbox{margin-top:22px}
+.paperbox summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px;list-style:none;color:var(--ink)}
+.paperbox summary::-webkit-details-marker{display:none}
+.paperbox .pt{font-weight:700;font-size:1.05rem;display:flex;align-items:center;gap:8px}
+.paperbox .pt::before{content:"";width:6px;height:18px;border-radius:2px;background:var(--ink)}
+.paperbox .pp{font-family:var(--mono);font-size:.85rem;color:var(--dim);display:flex;align-items:center;gap:8px}
+.paperbox .pp::after{content:"▾";font-size:1rem;transition:transform .2s}
+.paperbox[open] .pp::after{transform:rotate(180deg)}
+.paperbox .pbody{padding:0 14px 14px}
+.paperbox .bar{margin-bottom:10px}
+.paperbox .rest .n{border-color:var(--ink);color:var(--ink)}
 .sec{margin-top:22px}
 .sec h2{font-size:1.05rem;color:var(--ink);font-weight:700;margin:0 0 4px;display:flex;align-items:center;gap:8px}
 .sec h2::before{content:"";width:6px;height:18px;border-radius:2px;background:var(--rest)}
@@ -142,31 +166,6 @@ summary{padding:12px 14px;cursor:pointer;color:var(--dim);font-size:.95rem}
 .night[data-l="2"]{--nd:#B3172C;--nc:#6E1422}
 .dim{position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:28px}
 .dim button{width:56px;height:56px;border-radius:50%;background:none;border:1px solid var(--nc);color:var(--nc);font-size:1.4rem}
-/* Pulsador bajo guarda */
-.guardbox{margin:28px auto 8px;display:flex;flex-direction:column;align-items:center;gap:8px}
-.plate{position:relative;width:132px;height:150px;border-radius:8px;background:#3B4148;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 2px 6px rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:12px;perspective:420px}
-.plate .screw{position:absolute;width:9px;height:9px;border-radius:50%;background:#7C848D;box-shadow:inset 0 0 0 1px #2A2F35}
-.plate .screw::after{content:"";position:absolute;left:1px;right:1px;top:4px;height:1px;background:#2A2F35;transform:rotate(35deg)}
-.plate .s1{left:7px;top:7px}.plate .s2{right:7px;top:7px}.plate .s3{left:7px;bottom:7px}.plate .s4{right:7px;bottom:7px}
-.plate .legend{font-family:var(--sans);font-size:.7rem;font-weight:700;letter-spacing:.14em;color:#F3F3F3}
-.pb{position:absolute;left:50%;top:26px;width:70px;height:70px;margin-left:-35px;border-radius:6px;border:0;background:#20252A;box-shadow:inset 0 0 0 3px #15191D,0 2px 0 #111;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0}
-.pb span{display:block;width:44px;height:16px;border-radius:2px;background:#3A3A3A;color:#6B6B6B;font:700 .72rem/16px var(--mono);text-align:center}
-.pb .on{color:#6B5A20}
-.pb.lit .on{background:#FFB000;color:#241800;box-shadow:0 0 12px #FFB000}
-.pb:active{transform:translateY(1px)}
-.guard{position:absolute;left:50%;top:18px;width:90px;height:86px;margin-left:-45px;border-radius:8px 8px 10px 10px;border:0;cursor:pointer;background:repeating-linear-gradient(135deg,rgba(200,16,46,.92) 0 10px,rgba(240,240,240,.92) 10px 20px);box-shadow:0 3px 6px rgba(0,0,0,.45),inset 0 0 0 2px rgba(0,0,0,.25);transform-origin:50% 0;transition:transform .45s cubic-bezier(.3,1.4,.5,1);z-index:2;display:flex;align-items:center;justify-content:center}
-.guard b{background:#C8102E;color:#fff;font:700 .72rem var(--sans);letter-spacing:.1em;padding:3px 6px;border-radius:3px}
-.guard.open{transform:rotateX(-112deg)}
-.hinge{position:absolute;left:50%;top:12px;width:70px;height:8px;margin-left:-35px;border-radius:3px;background:#20252A;z-index:3}
-.babybg{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:20;padding:20px;padding-top:calc(20px + env(safe-area-inset-top,0px))}
-.babybg.show{display:flex}
-.babycard{position:relative;width:min(500px,100%);animation:pop .55s cubic-bezier(.2,1.5,.4,1) both}
-.babycard img,.babycard .ph{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;border:4px solid #FFC72C;background:#222;box-shadow:0 12px 40px rgba(0,0,0,.5)}
-.babycard .ph{display:none;align-items:center;justify-content:center;color:#ddd;text-align:center;padding:24px;font-size:.95rem}
-.babycard.noimg img{display:none}.babycard.noimg .ph{display:flex}
-.babyx{position:absolute;right:-10px;top:-10px;width:44px;height:44px;border-radius:50%;border:0;background:#C8102E;color:#fff;font-size:1.3rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4)}
-@keyframes pop{0%{transform:scale(.2) rotate(-12deg);opacity:0}60%{transform:scale(1.05) rotate(2deg);opacity:1}100%{transform:scale(1) rotate(0)}}
-@media (prefers-reduced-motion: reduce){.guard{transition:none}.babycard{animation:none}}
 button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--entry);outline-offset:2px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.show{opacity:1}
@@ -191,12 +190,20 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
       <small id="tkoLt"></small>
     </div>
     <div class="field">
-      <label for="eta">ETA UTC</label>
+      <div class="mode" role="group" aria-label="Calcular con">
+        <button type="button" id="mEta" aria-pressed="true">ETA UTC</button><button type="button" id="mDur" aria-pressed="false">Duración</button>
+      </div>
       <input id="eta" inputmode="numeric" autocomplete="off" placeholder="--:--" maxlength="5">
       <small id="etaLt"></small>
     </div>
   </section>
 
+  <div class="tl" id="tl" hidden>
+    <div class="tlhead"><span id="tlState"></span><span id="tlLeft"></span></div>
+    <div class="tlwrap"><div class="tltrack"><div class="tlmine" id="tlMine"></div><div class="tldone" id="tlDone"></div>
+      <svg class="tlplane" id="tlPlane" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div></div>
+    <div class="tlends"><span>DEP <b id="tlDep"></b></span><span id="tlTot"></span><span>ARR <b id="tlArr"></b></span></div>
+  </div>
   <div id="out"></div>
   <div id="alarmBox"></div>
 
@@ -210,28 +217,11 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
       <label for="sN">Número de descansos</label><span></span><input id="sN" inputmode="numeric" value="3">
       <label for="sLt">Hora local (UTC ±h)</label><span></span><input id="sLt" inputmode="decimal" placeholder="—">
       <p class="hint" id="installRow" hidden><a class="clock" id="installLink" target="_blank" rel="noopener">Instalar atajo «Descanso» (una vez)</a></p>
-      <p class="hint">Versión 10</p>
+      <p class="hint">Versión 11</p>
       <p class="hint">Los minutos que sobran al dividir se reparten entre los primeros descansos. El timer y las alarmas usan los horarios de máquina y suenan a la hora del reloj del móvil.</p>
     </div>
   </details>
-  <div class="guardbox">
-    <div class="plate">
-      <i class="screw s1"></i><i class="screw s2"></i><i class="screw s3"></i><i class="screw s4"></i>
-      <div class="hinge"></div>
-      <button class="guard" id="guard" type="button" aria-label="Levantar la guarda"><b>NO TOCAR</b></button>
-      <button class="pb" id="pb" type="button" aria-label="Pulsador"><span class="on">ON</span><span>PUSH</span></button>
-      <span class="legend">NO TOCAR</span>
-    </div>
-  </div>
 </main>
-<div class="babybg" id="babybg" role="dialog" aria-label="Sorpresa">
-  <div class="babycard" id="babycard">
-    <img src="bebe.jpg" alt="Foto del bebé" width="500" height="500" id="babyimg">
-    <div class="ph">Sube una foto de 500×500 llamada bebe.jpg junto a index.html</div>
-    <button class="babyx" id="babyx" type="button" aria-label="Cerrar">×</button>
-  </div>
-</div>
-
 <div class="ring" id="ring" role="alertdialog" aria-live="assertive">
   <div class="big" id="ringTime"></div>
   <p id="ringText"></p>
@@ -252,7 +242,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   var tko=$('tko'), eta=$('eta'), out=$('out'), box=$('alarmBox');
   var S={oA:$('oA'),oB:$('oB'),oG:$('oG'),uA:$('uA'),uB:$('uB'),uG:$('uG'),n:$('sN'),lt:$('sLt')};
   var KEY='descansos-v2';
-  var st={mine:null,post:10,armed:false};
+  var st={mine:null,post:10,armed:false,mode:'eta',paper:false};
   var ua=navigator.userAgent, isIOS=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&'ontouchend' in document), isAndroid=/Android/.test(ua);
 
   function pad(n){return (n<10?'0':'')+n}
@@ -295,19 +285,45 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
     return '<div class="bar'+(paper?' paper':'')+'" aria-hidden="true">'+h+'<div class="m" style="flex:'+p.b+'"></div></div>';
   }
 
+  function setMode(m){
+    if(m===st.mode)return;
+    var t=parse(tko.value),v=parse(eta.value);
+    if(t!==null&&v!==null){ // convierte el valor escrito al otro formato
+      var x=m==='dur'?((v-t+1440)%1440):(t+v);
+      eta.value=(m==='dur'&&x===0)?'':fmt(x);
+    }
+    st.mode=m;paintMode();calc();eta.focus();
+  }
+  function paintMode(){
+    $('mEta').setAttribute('aria-pressed',st.mode==='eta');$('mDur').setAttribute('aria-pressed',st.mode==='dur');
+    eta.setAttribute('aria-label',st.mode==='dur'?'Duración del vuelo (horas:minutos)':'ETA UTC');
+    eta.placeholder=st.mode==='dur'?'h:mm':'--:--';
+  }
+  $('mEta').addEventListener('click',function(){setMode('eta')});
+  $('mDur').addEventListener('click',function(){setMode('dur')});
+
   function calc(){
     var t=parse(tko.value),e=parse(eta.value),n=Math.max(1,Math.min(6,num(S.n,3))),off=ltOffset();
     $('tkoLt').textContent=(t!==null&&off!==null)?fmt(t+off)+' LT':'';
-    $('etaLt').textContent=(e!==null&&off!==null)?fmt(e+off)+' LT':'';
+    if(st.mode==='dur'){
+      if(e===0)e=null;
+      if(t!==null&&e!==null)e=t+e;
+      $('etaLt').textContent=(t!==null&&e!==null)?'ETA '+fmt(e)+(off!==null?' · '+fmt(e+off)+' LT':''):'';
+    }else{
+      $('etaLt').textContent=(e!==null&&off!==null)?fmt(e+off)+' LT':'';
+    }
     cur=null;
     if(t===null||e===null){
-      out.innerHTML='<div class="msg">Introduce la hora de despegue y la ETA en UTC. Basta con cuatro dígitos, por ejemplo 0725.</div>';
+      tlBox.hidden=true;
+    out.innerHTML='<div class="msg">Introduce la hora de despegue y la ETA en UTC, o la duración del vuelo. Basta con cuatro dígitos, por ejemplo 0725.</div>';
       box.innerHTML='';save();return;
     }
     if(e<=t)e+=1440;
+    if(e-t>1440)e-=1440;
     var O=split(t,e,num(S.oA,30),num(S.oB,55),num(S.oG,15),n);
     var U=split(t,e,num(S.uA,30),num(S.uB,30),num(S.uG,5),n);
     if(O.err||U.err){
+      tlBox.hidden=true;
       var p=O.err?O:U;
       out.innerHTML='<div class="msg err">El vuelo es demasiado corto para '+n+' descansos: quedan '+Math.max(0,p.win)+' min entre '+fmt(p.start)+' y '+fmt(p.end)+'. Revisa las horas o los ajustes.</div>';
       box.innerHTML='';save();return;
@@ -326,16 +342,19 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
         '<button class="pick" type="button" data-i="'+i+'" aria-pressed="'+me+'">'+(me?'Mi descanso':'Es mi descanso')+'</button></div>';
     }).join('');
 
-    out.innerHTML='<div class="ends"><span>Despegue '+fmt(t)+'</span><span>'+dur(e-t)+' de vuelo</span><span>ETA '+fmt(e)+'</span></div>'+
-      '<section class="sec paper"><h2>Para el papel</h2><p class="note">Franjas oficiales para la hoja de descansos, en UTC.</p>'+barHtml(O,true)+'<div class="rests">'+paperCards+'</div>'+
-      '<div class="actions"><button class="primary" id="copy" type="button">Copiar horarios</button><button id="clear" type="button">Borrar</button></div></section>'+
-      '<section class="sec" id="machine"><h2>Para la máquina</h2><p class="note">Marca tu descanso para el timer y las alarmas.</p>'+barHtml(U,false)+'<div class="rests">'+machineCards+'</div><div id="alarmSlot"></div></section>';
+    out.innerHTML='<details class="paperbox" id="paperBox"'+(st.paper?' open':'')+'><summary><span class="pt">Para el papel</span><span class="pp">'+fmt(O.r[0].s)+' – '+fmt(O.r[O.r.length-1].e)+'</span></summary>'+
+      '<div class="pbody"><p class="note">Franjas oficiales para la hoja de descansos, en UTC.</p>'+barHtml(O,true)+'<div class="rests">'+paperCards+'</div></div></details>'+
+      '<section class="sec" id="machine"><h2>Para la máquina</h2><p class="note">Marca tu descanso para el timer y las alarmas.</p>'+barHtml(U,false)+'<div class="rests">'+machineCards+'</div><div id="alarmSlot"></div></section>'+
+      '<div class="actions"><button class="primary" id="copy" type="button">Copiar horarios</button><button id="clear" type="button">Borrar</button></div>';
+    $('paperBox').addEventListener('toggle',function(){st.paper=this.open;save()});
+    tlBox.hidden=false;$('tlDep').textContent=fmt(t);$('tlArr').textContent=fmt(e);$('tlTot').textContent=dur(e-t);
+    updateTl();
     out.querySelectorAll('.pick').forEach(function(b){b.addEventListener('click',function(){
       var i=+b.dataset.i;st.mine=(st.mine===i?null:i);if(st.mine===null)disarm();calc();
       if(st.mine!==null)box.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
     })});
     $('copy').addEventListener('click',copy);
-    $('clear').addEventListener('click',function(){tko.value='';eta.value='';st.mine=null;disarm();calc();tko.focus()});
+    $('clear').addEventListener('click',function(){tko.value='';eta.value='';tlBox.hidden=true;st.mine=null;disarm();calc();tko.focus()});
     var slot=$('alarmSlot');if(slot)slot.appendChild(box);
     renderAlarm();save();
   }
@@ -428,8 +447,27 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   function stopRing(){stopSound();$('ring').classList.remove('show')}
   $('ringStop').addEventListener('click',stopRing);
 
+  var tlBox=$('tl');
+  function flightStart(t,len){ // fecha real de despegue: la que deja "ahora" dentro o más cerca del vuelo
+    var now=new Date(),b=toDate(t),best=null,bd=Infinity;
+    [-1,0,1].forEach(function(k){var s=new Date(b.getTime()+k*864e5),e=s.getTime()+len*60000,d=now<s?s-now:(now>e?now-e:0);if(d<bd){bd=d;best=s}});
+    return best;
+  }
+  function updateTl(){
+    if(!cur||tlBox.hidden)return;
+    var len=cur.e-cur.t,s=flightStart(cur.t,len),now=new Date(),el=(now-s)/60000,p=Math.max(0,Math.min(1,el/len));
+    $('tlDone').style.width=(p*100)+'%';$('tlPlane').style.left=(p*100)+'%';
+    var st1=$('tlState'),lf=$('tlLeft');
+    if(el<0){st1.innerHTML='Despegue en <b>'+dur(Math.ceil(-el))+'</b>';lf.innerHTML='<b>'+dur(len)+'</b> de vuelo'}
+    else if(el>=len){st1.innerHTML='<b>Aterrizado</b>';lf.textContent=''}
+    else{st1.innerHTML='Volado <b>'+dur(Math.floor(el))+'</b>';lf.innerHTML='Quedan <b>'+dur(Math.ceil(len-el))+'</b>'}
+    var m=$('tlMine');
+    if(st.mine!==null&&cur.U.r[st.mine]){var r=cur.U.r[st.mine];m.style.display='block';m.style.left=((r.s-cur.t)/len*100)+'%';m.style.width=(r.d/len*100)+'%'}
+    else m.style.display='none';
+  }
   function hms(ms){var s=Math.max(0,Math.ceil(ms/1000)),hh=Math.floor(s/3600),mm=Math.floor(s%3600/60),ss=s%60;return hh+':'+pad(mm)+':'+pad(ss)}
   function tick(){
+    updateTl();
     var c=$('count');
     if(cur&&st.mine!==null&&c){
       var r=cur.U.r[st.mine],now=new Date(),s=toDate(r.s),e=new Date(s.getTime()+r.d*60000),left=e-now,sub,top;
@@ -465,13 +503,13 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   var tt;function toast(m){var el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){el.classList.remove('show')},1600)}
 
   function save(){
-    try{var d={tko:tko.value,eta:eta.value,mine:st.mine,post:st.post,theme:document.documentElement.getAttribute('data-theme')||''};
+    try{var d={tko:tko.value,eta:eta.value,mode:st.mode,paper:st.paper,mine:st.mine,post:st.post,theme:document.documentElement.getAttribute('data-theme')||''};
       Object.keys(S).forEach(function(k){d[k]=S[k].value});localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}
   }
   function load(){
     try{var d=JSON.parse(localStorage.getItem(KEY)||'null');if(!d)return;
       tko.value=d.tko||'';eta.value=d.eta||'';st.mine=(typeof d.mine==='number')?d.mine:null;
-      if(typeof d.post==='number')st.post=d.post;
+      if(typeof d.post==='number')st.post=d.post;if(d.mode==='dur')st.mode='dur';st.paper=!!d.paper;
       Object.keys(S).forEach(function(k){if(d[k]!=null&&d[k]!=='')S[k].value=d[k]});
       if(d.theme)document.documentElement.setAttribute('data-theme',d.theme);
     }catch(e){}
@@ -484,23 +522,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
 
   if(isIOS&&SHORTCUT_INSTALL){$('installLink').href=SHORTCUT_INSTALL;$('installRow').hidden=false}
 
-  // Pulsador bajo guarda
-  (function(){
-    var g=$('guard'),pb=$('pb'),bg=$('babybg'),card=$('babycard'),img=$('babyimg');
-    img.addEventListener('error',function(){card.classList.add('noimg')});
-    g.addEventListener('click',function(){g.classList.toggle('open');g.setAttribute('aria-label',g.classList.contains('open')?'Bajar la guarda':'Levantar la guarda')});
-    pb.addEventListener('click',function(){
-      if(!g.classList.contains('open'))return;
-      pb.classList.add('lit');
-      try{navigator.vibrate&&navigator.vibrate(40)}catch(e){}
-      card.style.animation='none';void card.offsetWidth;card.style.animation='';
-      bg.classList.add('show');
-    });
-    function close(){bg.classList.remove('show');pb.classList.remove('lit');setTimeout(function(){g.classList.remove('open')},250)}
-    $('babyx').addEventListener('click',close);
-    bg.addEventListener('click',function(e){if(e.target===bg)close()});
-  })();
-  load();calc();
+  load();paintMode();calc();
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}
 })();
 </script>
