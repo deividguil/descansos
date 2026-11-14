@@ -1,6 +1,6 @@
 // Sube el número de versión cada vez que cambies algún archivo
-const CACHE='descansos-v13';
-const FILES=['./','index.html','manifest.json','icon-180.png','icon-192.png','icon-512.png',
+const CACHE='descansos-v14';
+const FILES=['./','index.html','manifest.json','icon-180.png?v=2','icon-192.png?v=2','icon-512.png?v=2',
  'B612-Regular.ttf','B612-Bold.ttf','B612Mono-Regular.ttf','B612Mono-Bold.ttf'];
 
 // Instalación: descarga todo saltándose la caché del navegador
