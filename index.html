@@ -44,6 +44,14 @@ main{max-width:560px;margin:0 auto;padding:16px 16px 40px}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-16px -16px 16px;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 14px;background:var(--brand);color:#fff;border-bottom:4px solid var(--mine)}
 header .ghost{border-color:rgba(255,255,255,.6);color:#fff}
 h1{font-size:1.15rem;margin:0}
+.helpov{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:flex;justify-content:center;padding:calc(12px + env(safe-area-inset-top,0px)) 12px 12px}
+.helpov[hidden]{display:none}
+.helpbox{background:var(--panel);color:var(--ink);border-radius:12px;max-width:560px;width:100%;overflow:auto;padding:0 18px 20px}
+.helphead{position:sticky;top:0;background:var(--panel);display:flex;justify-content:space-between;align-items:center;padding:14px 0 8px}
+.helphead h2{margin:0;color:var(--ink);font-size:1.1rem;font-weight:700}
+.helpbox h3{font-size:.98rem;margin:16px 0 4px;color:var(--entry)}
+.helpbox p,.helpbox li{font-size:.92rem;line-height:1.5;margin:0 0 8px}
+.helpbox ul{padding-left:18px;margin:0 0 8px}
 h2{font-size:.95rem;margin:0 0 8px;color:var(--dim);font-weight:400}
 button{font:inherit;cursor:pointer}
 .ghost{background:none;border:1px solid var(--line);color:var(--dim);font-size:.85rem;padding:6px 10px;border-radius:6px}
@@ -182,7 +190,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
 <main>
   <header>
     <h1>Descansos en vuelo</h1>
-    <button class="ghost" id="theme" type="button">Tema</button>
+    <div style="display:flex;gap:6px"><button class="ghost" id="helpBtn" type="button" aria-label="Ayuda">?</button><button class="ghost" id="theme" type="button">Tema</button></div>
   </header>
 
   <section class="inputs">
@@ -222,7 +230,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
       <label for="sN">Número de descansos</label><span></span><input id="sN" inputmode="numeric" value="3">
       <label for="sLt">Hora local (UTC ±h)</label><span></span><input id="sLt" inputmode="decimal" placeholder="—">
       <p class="hint" id="installRow" hidden><a class="clock" id="installLink" target="_blank" rel="noopener">Instalar atajo «Descanso» (una vez)</a></p>
-      <p class="hint">Versión 12</p>
+      <p class="hint">Versión 13</p>
       <p class="hint">Los minutos que sobran al dividir se reparten entre los primeros descansos. El timer y las alarmas usan los horarios de máquina y suenan a la hora del reloj del móvil.</p>
     </div>
   </details>
@@ -238,6 +246,31 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   <p id="nightSub"></p>
   <p style="margin-top:30px">Toca para salir</p>
   <div class="dim"><button type="button" id="dimDown" aria-label="Más tenue">−</button><button type="button" id="dimUp" aria-label="Más visible">+</button></div>
+</div>
+<div class="helpov" id="help" role="dialog" aria-label="Ayuda" hidden>
+  <div class="helpbox">
+    <div class="helphead"><h2>Ayuda</h2><button class="ghost" id="helpClose" type="button">Cerrar</button></div>
+    <h3>Para qué sirve</h3>
+    <p>Reparte el tiempo de vuelo en descansos iguales para la tripulación y te avisa cuando termina el tuyo.</p>
+    <h3>1. Mete el vuelo</h3>
+    <p><b>Despegue UTC</b>: basta con cuatro cifras (0725). <b>Ahora</b> pone la hora actual.</p>
+    <p>Luego la <b>ETA UTC</b> o, si lo prefieres, cambia a <b>Duración</b> y pon cuánto dura el vuelo. Debajo de cada hora sale la hora local si la has puesto en Ajustes.</p>
+    <h3>2. Para el papel y para la máquina</h3>
+    <p><b>Para el papel</b>: las franjas oficiales para la hoja de descansos, en UTC. Se pliega para que no estorbe.</p>
+    <p><b>Para la máquina</b>: los horarios reales que usáis a bordo, con otros márgenes (los cambias en Ajustes). La barra de arriba enseña el vuelo con los descansos y el avión avanzando.</p>
+    <p><b>Copiar horarios</b> los copia para pegarlos en un mensaje. <b>Borrar</b> empieza de cero.</p>
+    <h3>3. Marca tu descanso</h3>
+    <p>Pulsa <b>Es mi descanso</b> en el tuyo. Aparece la cuenta atrás y el aviso, que por defecto salta unos minutos antes del final; cámbialo con − y +.</p>
+    <ul>
+      <li><b>Poner timer</b> (iPhone): pone un temporizador en el reloj con el atajo «Descanso». La primera vez instala el atajo desde el enlace que sale debajo.</li>
+      <li><b>Modo descanso</b>: pantalla negra con la cuenta atrás, muy tenue para no deslumbrar. − y + cambian el brillo. Toca para salir.</li>
+      <li><b>Otras formas de aviso</b>: la alarma del reloj (Android) o la alarma de la propia app, que solo suena con la app abierta y la pantalla encendida.</li>
+    </ul>
+    <h3>Ajustes</h3>
+    <p>Minutos tras el despegue, antes de la ETA y entre descansos, por separado para papel y máquina; número de descansos y diferencia de la hora local con UTC. Los minutos que sobran al dividir se reparten entre los primeros descansos.</p>
+    <h3>Sin conexión</h3>
+    <p>Funciona en modo avión: todo se calcula en el propio móvil. Instálala con <b>Compartir → Añadir a pantalla de inicio</b>.</p>
+  </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -531,6 +564,10 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
   load();paintMode();calc();
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}
 })();
+(function(){var h=document.getElementById('help');
+  document.getElementById('helpBtn').addEventListener('click',function(){h.hidden=false;h.querySelector('.helpbox').scrollTop=0});
+  document.getElementById('helpClose').addEventListener('click',function(){h.hidden=true});
+  h.addEventListener('click',function(e){if(e.target===h)h.hidden=true});})();
 </script>
 </body>
 </html>
